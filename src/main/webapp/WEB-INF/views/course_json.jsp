@@ -15,12 +15,17 @@
 
 </head>
 <script>
-jQuery(function($){
-	var urlStr = "<%=request.getContextPath()%>/course/<%=request.getParameter("courseId")%>";
-	alert("Before Call:"+urlStr);
+
+//装B的写法为jQuery(function($){,还是下面清晰易懂
+$(document).ready(function(){
+	//两种写法，注意非request.getParameter(name)
+	//var urlStr = "<%=request.getContextPath()%>/course/jsonbody/<%=request.getAttribute("courseId")%>";
+	var urlStr = "<%=request.getContextPath()%>/course/jsonbody/${courseId}";
+	//alert("Before Call:"+urlStr);
 	$.ajax({
 		//method: "GET",
 		url: urlStr,
+ 		dataType:"json",	//重要参数
 		success:function(data,status,jqXHR){
 			//alert("Success:"+data);
 			var course = data;
