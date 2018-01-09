@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+
+	<!-- 启用Spring基于annotation的依赖注入，以便使用Spring的强大功能 例如 @Required @Autowired @PostConstruct 
+		@PreDestroy @Resource 等标注 -->
+	<context:annotation-config></context:annotation-config>
+
+	<!-- DispatcherServlet上下文管理bean的范围，只管理@Controller类型的bean，其他如@Service等交由Spring管理，注意对层次化的深入理解 -->
+	<context:component-scan base-package="eepm.sippr.eepj">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- HandlerMapping无需配置，SpringMVC将默认启动DefaultAnnotationHandlerMapping -->
+
+	<!-- 扩充了注解驱动，很强大的功能，实现了将请求参数绑定到控制器参数[即URL查询参数中的某变量直接映射到Controller中某个方法的输入参数] -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+	<!-- viewResolver配置，多个需用order属性排序，InternalResourceViewResolver须放最后[用于返回对象] -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4"></bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 静态资源访问，如css js img -->
+	<mvc:resources location="/assets/" mapping="/assets/**"></mvc:resources>
+
+	<!-- 文件上传bean，resolverLazily属性启用是为延迟文件解析，以捕获文件大小异常 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="209715200"></property>
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<property name="resolveLazily" value="true"></property>
+	</bean>
+
+</beans>
